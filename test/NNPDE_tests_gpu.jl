@@ -1,7 +1,5 @@
 using Flux
-println("NNPDE_tests")
 using DiffEqFlux
-println("Starting Soon!")
 using ModelingToolkit
 using DiffEqBase
 using Test, NeuralPDE
@@ -43,7 +41,7 @@ domains = [x ∈ IntervalDomain(0.0,2.0),
 # Discretization
 dx = 0.25; dy= 0.25; dt = 0.25
 # Neural network
-const gpuones = cu(ones(1))
+const gpuones = Float32[1.0] |> gpu
 chain = FastChain(FastDense(3,16,Flux.σ),FastDense(16,16,Flux.σ),FastDense(16,1),(u,p)->gpuones .* u)
 
 initθ = initial_params(chain) |>gpu
@@ -68,7 +66,7 @@ u_predict = [reshape([first(phi([x,y,t],Array(res.minimizer))) for x in xs  for 
 
 ## Example 2, ## Fokker-Planck equation
 # the example took from this article https://arxiv.org/abs/1910.10503
-@parameters x
+@parameters xv
 @variables p(..)
 @derivatives Dx'~x
 @derivatives Dxx''~x

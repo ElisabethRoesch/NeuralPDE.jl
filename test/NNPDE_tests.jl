@@ -1,11 +1,9 @@
 using Flux
-println("NNPDE_tests")
 using DiffEqFlux
-println("Starting Soon!")
 using ModelingToolkit
 using DiffEqBase
-using Test, NeuralPDE
-println("Starting Soon!")
+using Test
+import NeuralPDE
 using GalacticOptim
 using Optim
 using Quadrature,Cubature, Cuba
@@ -212,8 +210,8 @@ u_predict  = [first(phi(x,res.minimizer)) for x in xs]
 # plot!(x_plot ,u_predict)
 
 ## Example 4, system of pde
-@parameters x, y
-@variables u1(..), u2(..)
+@parameters x, y # time, space
+@variables u1(..), u2(..) # gene 1 and 2
 @derivatives Dx'~x
 @derivatives Dy'~y
 
@@ -251,10 +249,14 @@ minimizers = [res.minimizer[s] for s in sep]
 u_predict  = [[phi[i]([x,y],minimizers[i])[1] for x in xs  for y in ys] for i in 1:2]
 
 @test u_predict ≈ u_real atol = 10.0
+using Plots
+p1 = plot(xs, ys, u_predict[2], xlabel = "x",ylabel = "y",zlabel = "u", title = "predict",  st=:surface);
+    plot!(xs, ys, u_predict[1], xlabel = "x",ylabel = "y",zlabel = "u", title = "predict", st=:surface);
+p2 = plot(xs, ys, u_real[2], xlabel = "x",ylabel = "y",zlabel = "u", title = "real",  st=:surface);
+    plot!(xs, ys, u_real[1], xlabel = "x",ylabel = "y",zlabel = "u", title = "real",  st=:surface);
+plot(p1,p2)
 
-# p1 =plot(xs, ys, u_predict, st=:surface);
-# p2 = plot(xs, ys, u_real, st=:surface);
-# plot(p1,p2)
+
 
 ## Example 5, 2d wave equation, neumann boundary condition
 #here we use low level api for build solution
@@ -377,3 +379,7 @@ diff_u = abs.(u_predict .- u_real)
 # p2 = plot(xs, ys, u_predict, linetype=:contourf,title = "predict");
 # p3 = plot(xs, ys, diff_u,linetype=:contourf,title = "error");
 # plot(p1,p2,p3)
+
+
+
+ FluxDiffEqFlux ModelingToolkit DiffEqBase Test NeuralPDE GalacticOptim Optim Quadrature Cubature Cuba QuasiMonteCarlo
