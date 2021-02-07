@@ -32,8 +32,10 @@ u0 = Flux.Chain(Dense(d,hls,relu),
                   Dense(hls,d))
 pdealg = NNPDENS(u0, σᵀ∇u, opt=opt)
 
-ans = solve(prob, pdealg, verbose=true, maxiters=200, trajectories=m,
+ans = solve(prob, pdealg, verbose=true, maxiters=1000, trajectories=m,
                             alg=EM(), dt=dt, pabstol = 1f-6)
+print("typeof(ans): ", typeof(ans))
+print("typeof(analytical_ans): ", typeof(analytical_ans))
 
 u_analytical(x,t) = sum(x.^2) .+ d*t
 analytical_ans = u_analytical(x0, tspan[end])
